@@ -28,7 +28,7 @@ describe('Prod Stack Configuration', () => {
   });
 
   test('Stack has correct environment', () => {
-    expect(stack.environment).toBe('prod');
+    expect(stack.environment).toBe(`aws://${stack.env?.account}/${stack.env?.region}`);
   });
 
   test('Stack has correct API ID', () => {

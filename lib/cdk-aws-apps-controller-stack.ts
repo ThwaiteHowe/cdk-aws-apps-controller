@@ -16,6 +16,7 @@ export class CdkInfraControllerStack extends cdk.Stack {
   public readonly apiDomainName: string;
   public readonly environment: string;
   public readonly apiId: string;
+  public readonly env?: cdk.Environment;
 
   constructor(scope: Construct, id: string, props: CdkInfraControllerStackProps) {
     const account = process.env.CDK_DEFAULT_ACCOUNT || '1430118840082';
@@ -29,6 +30,7 @@ export class CdkInfraControllerStack extends cdk.Stack {
     this.domainName = props.domainName;
     this.apiDomainName = props.apiDomainName;
     this.apiId = props.apiId;
+    this.env = { account, region };
 
     // Add tags to all resources in the stack
     cdk.Tags.of(this).add('Environment', props.environment);
@@ -39,7 +41,7 @@ export class CdkInfraControllerStack extends cdk.Stack {
     // Import the existing API Gateway
     const api = apigatewayv2.HttpApi.fromHttpApiAttributes(this, 'ImportedApi', {
       httpApiId: props.apiId,
-      apiEndpoint: cdk.Fn.sub('https://${apiId}.execute-api.${AWS::Region}.amazonaws.com', {
+      apiEndpoint: cdk.Fn.sub(`${this.apiId}.execute-api.${this.region}.amazonaws.com`, {
         apiId: props.apiId,
       }),
     });
