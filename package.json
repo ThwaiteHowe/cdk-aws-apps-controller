@@ -20,7 +20,9 @@
     "cdk:dev": "cdk synth --profile thwaitehowe",
     "cdk:prod": "cdk synth --app \"npx ts-node bin/prod.ts\" --profile thwaitehowe",
     "deploy:dev": "cdk deploy --profile thwaitehowe",
-    "deploy:prod": "cdk deploy --app \"npx ts-node bin/prod.ts\" --profile thwaitehowe"
+    "deploy:prod": "cdk deploy --app \"npx ts-node bin/prod.ts\" --profile thwaitehowe",
+    "destroy:dev": "cdk destroy --profile thwaitehowe",
+    "destroy:prod": "cdk destroy --app \"npx ts-node bin/prod.ts\" --profile thwaitehowe"
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
