@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeEach } from 'vitest';
 import { App, Stack } from 'aws-cdk-lib';
 import { Route53Construct } from '../../lib/constructs/route53-construct';
 import * as route53 from 'aws-cdk-lib/aws-route53';

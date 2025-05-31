@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeEach } from 'vitest';
 import { App } from 'aws-cdk-lib';
 import { CdkInfraControllerStack } from '../lib/cdk-aws-apps-controller-stack';
 
