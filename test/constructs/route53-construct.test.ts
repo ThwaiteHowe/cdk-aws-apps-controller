@@ -1,7 +1,6 @@
 import { describe, test, expect, beforeEach } from 'vitest';
 import { App, Stack } from 'aws-cdk-lib';
 import { Route53Construct } from '../../lib/constructs/route53-construct';
-import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as apigatewayv2 from 'aws-cdk-lib/aws-apigatewayv2';
 
 describe('Route53 Construct', () => {
@@ -58,9 +57,21 @@ describe('Route53 Construct', () => {
     
     // Find the API record resource
     const apiRecord = Object.values(resources).find(
-      (resource: any) => resource.Type === 'AWS::Route53::RecordSet' && 
-                        resource.Properties?.Name?.includes('api')
-    ) as { Properties: { Type: string } };
+      (resource): resource is { 
+        Type: string; 
+        Properties: { 
+          Name: string; 
+          Type: string;
+          [key: string]: unknown;
+        } 
+      } => {
+        if (typeof resource !== 'object' || resource === null) return false;
+        if (!('Type' in resource) || !('Properties' in resource)) return false;
+        if (resource.Type !== 'AWS::Route53::RecordSet') return false;
+        const props = resource.Properties as { Name?: string };
+        return typeof props.Name === 'string' && props.Name.includes('api');
+      }
+    )!;
 
     expect(apiRecord).toBeDefined();
     expect(apiRecord.Properties.Type).toBe('A');
