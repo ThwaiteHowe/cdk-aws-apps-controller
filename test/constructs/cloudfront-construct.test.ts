@@ -52,6 +52,7 @@ describe('CloudFront Construct', () => {
   });
 
   test('Creates CORS response headers policy', () => {
+    // Create the CloudFront construct
     const cloudfront = new CloudFrontConstruct(stack, 'TestCloudFront', {
       domainName: 'test.example.com',
       apiDomainName: 'api.test.example.com',
@@ -68,10 +69,17 @@ describe('CloudFront Construct', () => {
     const template = app.synth().getStackByName(stack.stackName).template;
     const resources = template.Resources;
     
+    expect(cloudfront.distribution).toBeDefined();
+    expect(resources).toBeDefined();
+    
     // Find the CORS policy resource
-    const corsPolicy = Object.values(resources).find(
-      (resource: any) => resource.Type === 'AWS::CloudFront::ResponseHeadersPolicy'
-    ) as { Properties: { ResponseHeadersPolicyConfig: { Name: string } } };
+    const corsPolicy = Object.values(resources || {}).find(
+      (resource): resource is { Type: string; Properties: { ResponseHeadersPolicyConfig: { Name: string } } } => 
+        typeof resource === 'object' && 
+        resource !== null && 
+        'Type' in resource && 
+        resource.Type === 'AWS::CloudFront::ResponseHeadersPolicy'
+    )!;
 
     expect(corsPolicy).toBeDefined();
     expect(corsPolicy.Properties.ResponseHeadersPolicyConfig.Name).toContain('test-cors-policy');

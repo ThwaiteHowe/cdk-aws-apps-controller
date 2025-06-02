@@ -32,8 +32,12 @@ describe('CDK Infrastructure Controller Stack', () => {
 
     // Find the API Gateway custom domain
     const apiDomain = Object.values(resources).find(
-      (resource: any) => resource.Type === 'AWS::ApiGatewayV2::DomainName'
-    ) as { Properties: { DomainName: string } };
+      (resource): resource is { Type: string; Properties: { DomainName: string } } => {
+        if (typeof resource !== 'object' || resource === null) return false;
+        if (!('Type' in resource) || !('Properties' in resource)) return false;
+        return resource.Type === 'AWS::ApiGatewayV2::DomainName';
+      }
+    )!;
 
     expect(apiDomain).toBeDefined();
     expect(apiDomain.Properties.DomainName).toBe('api.test.example.com');
@@ -45,8 +49,12 @@ describe('CDK Infrastructure Controller Stack', () => {
 
     // Find the CloudFront distribution
     const distribution = Object.values(resources).find(
-      (resource: any) => resource.Type === 'AWS::CloudFront::Distribution'
-    ) as { Properties: { DistributionConfig: { Aliases: string[] } } };
+      (resource): resource is { Type: string; Properties: { DistributionConfig: { Aliases: string[] } } } => {
+        if (typeof resource !== 'object' || resource === null) return false;
+        if (!('Type' in resource) || !('Properties' in resource)) return false;
+        return resource.Type === 'AWS::CloudFront::Distribution';
+      }
+    )!;
 
     expect(distribution).toBeDefined();
     expect(distribution.Properties.DistributionConfig.Aliases).toContain('test.example.com');
@@ -58,8 +66,12 @@ describe('CDK Infrastructure Controller Stack', () => {
 
     // Find the Route53 records
     const records = Object.values(resources).filter(
-      (resource: any) => resource.Type === 'AWS::Route53::RecordSet'
-    ) as Array<{ Properties: { Name: string; Type: string } }>;
+      (resource): resource is { Type: string; Properties: { Name: string; Type: string } } => {
+        if (typeof resource !== 'object' || resource === null) return false;
+        if (!('Type' in resource) || !('Properties' in resource)) return false;
+        return resource.Type === 'AWS::Route53::RecordSet';
+      }
+    );
 
     expect(records.length).toBeGreaterThan(0);
     expect(records.some(record => record.Properties.Name.includes('test.example.com'))).toBe(true);
@@ -71,8 +83,12 @@ describe('CDK Infrastructure Controller Stack', () => {
 
     // Find the ACM certificates
     const certificates = Object.values(resources).filter(
-      (resource: any) => resource.Type === 'AWS::CertificateManager::Certificate'
-    ) as Array<{ Properties: { DomainName: string; SubjectAlternativeNames: string[] } }>;
+      (resource): resource is { Type: string; Properties: { DomainName: string; SubjectAlternativeNames?: string[] } } => {
+        if (typeof resource !== 'object' || resource === null) return false;
+        if (!('Type' in resource) || !('Properties' in resource)) return false;
+        return resource.Type === 'AWS::CertificateManager::Certificate';
+      }
+    );
 
     expect(certificates.length).toBeGreaterThan(0);
     expect(certificates.some(cert => 
@@ -87,8 +103,13 @@ describe('CDK Infrastructure Controller Stack', () => {
 
     // Check tags on a few key resources
     const taggedResources = Object.values(resources).filter(
-      (resource: any) => resource.Properties?.Tags
-    ) as Array<{ Properties: { Tags: { Key: string; Value: string }[] } }>;
+      (resource): resource is { Type: string; Properties: { Tags: { Key: string; Value: string }[] } } => {
+        if (typeof resource !== 'object' || resource === null) return false;
+        if (!('Type' in resource) || !('Properties' in resource)) return false;
+        const props = resource.Properties as { Tags?: { Key: string; Value: string }[] };
+        return Array.isArray(props.Tags);
+      }
+    );
 
     expect(taggedResources.length).toBeGreaterThan(0);
     expect(taggedResources[0].Properties.Tags).toContainEqual({ Key: 'Domain', Value: 'test.example.com' });
