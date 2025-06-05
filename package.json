@@ -19,13 +19,13 @@
     "test:constructs": "vitest run test/cdk-aws-apps-controller-stack.test.ts",
     "test": "vitest run",
     "diff:dev": "NODE_OPTIONS='--max-old-space-size=490' cdk diff",
-    "diff:prod": "NODE_OPTIONS='--max-old-space-size=490' cdk diff --quiet --app \"npx ts-node bin/prod.ts\"",
-    "cdk:dev": "cdk synth --quiet",
-    "cdk:prod": "NODE_OPTIONS='--max-old-space-size=490' cdk synth --quiet --app \"npx ts-node bin/prod.ts\"",
+    "diff:prod": "NODE_OPTIONS='--max-old-space-size=490' cdk diff --app \"npx ts-node bin/prod.ts\"",
+    "cdk:dev": "NODE_OPTIONS='--max-old-space-size=490' cdk synth",
+    "cdk:prod": "NODE_OPTIONS='--max-old-space-size=490' cdk synth --app \"npx ts-node bin/prod.ts\"",
     "deploy:dev": "NODE_OPTIONS='--max-old-space-size=490' cdk deploy",
-    "deploy:prod": "NODE_OPTIONS='--max-old-space-size=490' cdk deploy --quiet --app \"npx ts-node bin/prod.ts\"",
-    "destroy:dev": "cdk destroy",
-    "destroy:prod": "cdk destroy --app \"npx ts-node bin/prod.ts\""
+    "deploy:prod": "NODE_OPTIONS='--max-old-space-size=490' cdk deploy --app \"npx ts-node bin/prod.ts\"",
+    "destroy:dev": "NODE_OPTIONS='--max-old-space-size=490' cdk destroy",
+    "destroy:prod": "NODE_OPTIONS='--max-old-space-size=490' cdk destroy --app \"npx ts-node bin/prod.ts\""
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",

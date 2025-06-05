@@ -19,8 +19,8 @@ export class CdkInfraControllerStack extends cdk.Stack {
   public readonly env?: cdk.Environment;
 
   constructor(scope: Construct, id: string, props: CdkInfraControllerStackProps) {
-    const account = process.env.CDK_DEFAULT_ACCOUNT || '1430118840082';
-    const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
+    const account = process.env.CDK_DEFAULT_ACCOUNT || 'xxxx';
+    const region = process.env.CDK_DEFAULT_REGION || 'xxxx';
 
     super(scope, id, {
       ...props,

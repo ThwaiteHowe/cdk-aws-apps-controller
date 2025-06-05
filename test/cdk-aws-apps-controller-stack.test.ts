@@ -1,6 +1,10 @@
 import { describe, test, expect, beforeEach } from 'vitest';
 import { App } from 'aws-cdk-lib';
 import { CdkInfraControllerStack } from '../lib/cdk-aws-apps-controller-stack';
+import * as dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 describe('CDK Infrastructure Controller Stack', () => {
   let app: App;
@@ -9,20 +13,20 @@ describe('CDK Infrastructure Controller Stack', () => {
   beforeEach(() => {
     app = new App();
     stack = new CdkInfraControllerStack(app, 'TestStack', {
-      domainName: 'test.example.com',
-      apiDomainName: 'api.test.example.com',
-      environment: 'test',
+      domainName: process.env.DOMAIN_NAME || 'xxxxxx',
+      apiDomainName: process.env.API_DOMAIN_NAME || 'xxxxx',
+      environment: process.env.ENVIRONMENT || 'xxxx',
       apiId: 'test-api-id',
       env: {
-        account: '1430118840082',
-        region: 'us-east-1',
+        account: process.env.CDK_DEFAULT_ACCOUNT || 'xxxx',
+        region: process.env.CDK_DEFAULT_REGION || 'xxxx',
       },
     });
   });
 
   test('Stack has correct properties', () => {
-    expect(stack.domainName).toBe('test.example.com');
-    expect(stack.apiDomainName).toBe('api.test.example.com');
+    expect(stack.domainName).toBe(process.env.DOMAIN_NAME);
+    expect(stack.apiDomainName).toBe(process.env.API_DOMAIN_NAME);
     expect(stack.apiId).toBe('test-api-id');
   });
 
@@ -40,7 +44,7 @@ describe('CDK Infrastructure Controller Stack', () => {
     )!;
 
     expect(apiDomain).toBeDefined();
-    expect(apiDomain.Properties.DomainName).toBe('api.test.example.com');
+    expect(apiDomain.Properties.DomainName).toBe(process.env.API_DOMAIN_NAME);
   });
 
   test('Creates CloudFront distribution', () => {
@@ -57,7 +61,7 @@ describe('CDK Infrastructure Controller Stack', () => {
     )!;
 
     expect(distribution).toBeDefined();
-    expect(distribution.Properties.DistributionConfig.Aliases).toContain('test.example.com');
+    expect(distribution.Properties.DistributionConfig.Aliases).toContain(process.env.DOMAIN_NAME);
   });
 
   test('Creates Route53 records', () => {
@@ -74,7 +78,7 @@ describe('CDK Infrastructure Controller Stack', () => {
     );
 
     expect(records.length).toBeGreaterThan(0);
-    expect(records.some(record => record.Properties.Name.includes('test.example.com'))).toBe(true);
+    expect(records.some(record => record.Properties.Name.includes(process.env.DOMAIN_NAME || ''))).toBe(true);
   });
 
   test('Creates ACM certificates', () => {
@@ -92,8 +96,8 @@ describe('CDK Infrastructure Controller Stack', () => {
 
     expect(certificates.length).toBeGreaterThan(0);
     expect(certificates.some(cert => 
-      cert.Properties.DomainName === 'test.example.com' || 
-      cert.Properties.SubjectAlternativeNames?.includes('test.example.com')
+      cert.Properties.DomainName === process.env.DOMAIN_NAME || 
+      cert.Properties.SubjectAlternativeNames?.includes(process.env.DOMAIN_NAME || '')
     )).toBe(true);
   });
 
@@ -112,8 +116,8 @@ describe('CDK Infrastructure Controller Stack', () => {
     );
 
     expect(taggedResources.length).toBeGreaterThan(0);
-    expect(taggedResources[0].Properties.Tags).toContainEqual({ Key: 'Domain', Value: 'test.example.com' });
-    expect(taggedResources[0].Properties.Tags).toContainEqual({ Key: 'Environment', Value: 'test' });
+    expect(taggedResources[0].Properties.Tags).toContainEqual({ Key: 'Domain', Value: process.env.DOMAIN_NAME || '' });
+    expect(taggedResources[0].Properties.Tags).toContainEqual({ Key: 'Environment', Value: process.env.ENVIRONMENT || '' });
     expect(taggedResources[0].Properties.Tags).toContainEqual({ Key: 'ManagedBy', Value: 'CDK' });
     expect(taggedResources[0].Properties.Tags).toContainEqual({ Key: 'Project', Value: 'Thwaite Howe' });
   });

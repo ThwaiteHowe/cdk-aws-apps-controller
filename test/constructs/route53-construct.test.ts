@@ -2,6 +2,10 @@ import { describe, test, expect, beforeEach } from 'vitest';
 import { App, Stack } from 'aws-cdk-lib';
 import { Route53Construct } from '../../lib/constructs/route53-construct';
 import * as apigatewayv2 from 'aws-cdk-lib/aws-apigatewayv2';
+import * as dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 describe('Route53 Construct', () => {
   let app: App;
@@ -12,8 +16,8 @@ describe('Route53 Construct', () => {
     app = new App();
     stack = new Stack(app, 'TestStack', {
       env: {
-        account: '1430118840082',
-        region: 'us-east-1',
+        account: process.env.CDK_DEFAULT_ACCOUNT || 'xxxx',
+        region: process.env.CDK_DEFAULT_REGION || 'xxxx',
       },
     });
 
@@ -26,11 +30,11 @@ describe('Route53 Construct', () => {
 
   test('Creates hosted zone lookup', () => {
     const route53Construct = new Route53Construct(stack, 'TestRoute53', {
-      domainName: 'test.example.com',
-      environment: 'test',
+      domainName: process.env.DOMAIN_NAME || 'xxxxxx',
+      environment: process.env.ENVIRONMENT || 'xxxx',
       env: {
-        account: '1430118840082',
-        region: 'us-east-1',
+        account: process.env.CDK_DEFAULT_ACCOUNT || 'xxxx',
+        region: process.env.CDK_DEFAULT_REGION || 'xxxx',
       },
     });
 
@@ -39,12 +43,12 @@ describe('Route53 Construct', () => {
 
   test('Creates DNS record for API Gateway when provided', () => {
     const route53Construct = new Route53Construct(stack, 'TestRoute53', {
-      domainName: 'test.example.com',
+      domainName: process.env.DOMAIN_NAME || 'xxxxxx',
       api,
-      environment: 'test',
+      environment: process.env.ENVIRONMENT || 'xxxx',
       env: {
-        account: '1430118840082',
-        region: 'us-east-1',
+        account: process.env.CDK_DEFAULT_ACCOUNT || 'xxxx',
+        region: process.env.CDK_DEFAULT_REGION || 'xxxx',
       },
     });
 

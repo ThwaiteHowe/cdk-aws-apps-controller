@@ -3,6 +3,10 @@ import { App, Stack } from 'aws-cdk-lib';
 import { CloudFrontConstruct } from '../../lib/constructs/cloudfront-construct';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as apigatewayv2 from 'aws-cdk-lib/aws-apigatewayv2';
+import * as dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 describe('CloudFront Construct', () => {
   let app: App;
@@ -14,14 +18,14 @@ describe('CloudFront Construct', () => {
     app = new App();
     stack = new Stack(app, 'TestStack', {
       env: {
-        account: '1430118840082',
-        region: 'us-east-1',
+        account: process.env.CDK_DEFAULT_ACCOUNT || 'xxxx',
+        region: process.env.CDK_DEFAULT_REGION || 'xxxx',
       },
     });
 
     // Create a mock hosted zone
     hostedZone = route53.HostedZone.fromLookup(stack, 'TestHostedZone', {
-      domainName: 'thwaitehowe.com',
+      domainName: process.env.DOMAIN_NAME || 'xxxxxx',
       privateZone: false,
     });
 
@@ -34,14 +38,14 @@ describe('CloudFront Construct', () => {
 
   test('Creates CloudFront distribution with correct properties', () => {
     const cloudfront = new CloudFrontConstruct(stack, 'TestCloudFront', {
-      domainName: 'test.example.com',
-      apiDomainName: 'api.test.example.com',
+      domainName: process.env.DOMAIN_NAME || 'xxxxxx',
+      apiDomainName: process.env.API_DOMAIN_NAME || 'xxxxx',
       api,
       hostedZone,
       environment: 'test',
       env: {
-        account: '1430118840082',
-        region: 'us-east-1',
+        account: process.env.CDK_DEFAULT_ACCOUNT || 'xxxx',
+        region: process.env.CDK_DEFAULT_REGION || 'xxxx',
       },
     });
 
@@ -54,14 +58,14 @@ describe('CloudFront Construct', () => {
   test('Creates CORS response headers policy', () => {
     // Create the CloudFront construct
     const cloudfront = new CloudFrontConstruct(stack, 'TestCloudFront', {
-      domainName: 'test.example.com',
-      apiDomainName: 'api.test.example.com',
+      domainName: process.env.DOMAIN_NAME || 'xxxxxx',
+      apiDomainName: process.env.API_DOMAIN_NAME || 'xxxxx',
       api,
       hostedZone,
-      environment: 'test',
+      environment: process.env.ENVIRONMENT || 'xxxx',
       env: {
-        account: '1430118840082',
-        region: 'us-east-1',
+        account: process.env.CDK_DEFAULT_ACCOUNT || 'xxxx',
+        region: process.env.CDK_DEFAULT_REGION || 'xxxx',
       },
     });
 
