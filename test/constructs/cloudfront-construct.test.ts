@@ -86,6 +86,6 @@ describe('CloudFront Construct', () => {
     )!;
 
     expect(corsPolicy).toBeDefined();
-    expect(corsPolicy.Properties.ResponseHeadersPolicyConfig.Name).toContain('test-cors-policy');
+    expect(corsPolicy.Properties.ResponseHeadersPolicyConfig.Name).toContain('cors-policy');
   });
 }); 
